@@ -155,13 +155,13 @@ bool isAlmostBipartite(Graph* graph, int upperBound) {
     int graph_len = graph->V;
 
     for (int i = 0; i < graph_len; i++) {
-        int* current = graph->adj[i];
+        int* current = graph->adj[i]; //get row of adj array
 
         for (int j = 0; j < graph->adjSize[i]; j++) {
-            int cmp = current[j];
+            int cmp = current[j];//get int from adj array
 
             if (graph->colors[i] == graph->colors[cmp]) {
-                int* weight_list=graph->weights[i];
+                int* weight_list=graph->weights[i];//get row of weights
                 count+=weight_list[j];
             }
         }
