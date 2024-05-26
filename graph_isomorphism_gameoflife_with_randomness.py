@@ -34,27 +34,38 @@ def color_node(G, key, g_color_mapping, random_modifier, disableRandomness):
     neighbor_yellowCount = sum(1 for neighbor in G.neighbors(key) if g_color_mapping[neighbor] == "yellow")
     neighbor_blueCount = sum(1 for neighbor in G.neighbors(key) if g_color_mapping[neighbor] == "blue")
 
+
+    totalCount=neighbor_yellowCount+neighbor_redCount+neighbor_blueCount+neighbor_greenCount
+    if totalCount!=0:
+        neighbor_redCount_percentage=(neighbor_redCount/totalCount)*100
+        neighbor_yellowCount_percentage=(neighbor_yellowCount/totalCount)*100
+        neighbor_blueCount_percentage=(neighbor_blueCount/totalCount)*100
+        neighbor_greenCount_percentage=(neighbor_greenCount/totalCount)*100
+    else:
+        neighbor_redCount_percentage=0
+        neighbor_yellowCount_percentage=0
+        neighbor_blueCount_percentage=0
+        neighbor_greenCount_percentage=0
+
     current_color = g_color_mapping[key]
     potential_colors = ["red", "green", "blue", "yellow"]
     potential_colors.remove(current_color)
 
-    if neighbor_redCount > 2:
-        if oneCount % 2 == 0:
-            g_color_mapping[key] = "red"
-    if neighbor_greenCount >= 3 and neighbor_redCount < 2:
-        if oneCount % 2 == 0:
-            g_color_mapping[key] = "green"
-    if neighbor_yellowCount >= 2 and neighbor_redCount == 0:
-        if oneCount % 2 == 0:
-            g_color_mapping[key] = "blue"
-    if neighbor_blueCount >= 2 and neighbor_greenCount < 2 and neighbor_redCount > 0:
-        if oneCount % 2 == 0:
-            g_color_mapping[key] = "yellow"
+
+
+    if neighbor_redCount_percentage >= 40 and oneCount%5==0:
+        g_color_mapping[key] = "red"
+    if (neighbor_greenCount_percentage >= 60 and neighbor_redCount_percentage < 20) and oneCount%3==0:
+        g_color_mapping[key] = "green"
+    if (neighbor_greenCount_percentage >= 30 and neighbor_blueCount_percentage>=40) and oneCount%7==0:
+        g_color_mapping[key] = "blue"
+    if (neighbor_yellowCount_percentage>=20 and neighbor_redCount_percentage>=30) and oneCount%3!=0:
+        g_color_mapping[key] = "yellow"
     else:
-        # Introduce a random color change with a small probability to avoid stagnation
         if not disableRandomness:
             if random.random() < random_modifier:
                 g_color_mapping[key] = random.choice(potential_colors)
+
 
 
 def compare_color_distributions(color_mapping1, color_mapping2):
@@ -70,7 +81,7 @@ def compare_color_distributions(color_mapping1, color_mapping2):
     )
 
 
-def get_images(iter_number, stability_threshold=1000, color_change_threshold=5000,
+def get_images(iter_number, stability_threshold=1000, color_change_threshold=1000,
                random_modifier=0.001, node_size=15, disableRandomness=False, isTestInstance=False):
     try:
         if disableRandomness:
